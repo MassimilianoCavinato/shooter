@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 module.exports = function(req, res){
 
   let rooms_max = 8;

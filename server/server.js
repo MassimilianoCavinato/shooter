@@ -7,7 +7,4 @@ var getDungeon = require('./mods/getDungeon');
 server.use(cors());
 server.use('/assets', express.static('assets'));
 server.listen(port, () => console.log(`Server up`));
-
-
-
 server.get('/dungeon', getDungeon);
