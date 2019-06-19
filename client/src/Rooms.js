@@ -21,11 +21,12 @@ var json = {
   ]
 }
 
+
 var Rooms = json.rooms.map(function(room){
   return new Phaser.Class({
       Extends: Phaser.Scene,
-      initialize: function Room1 (){
-          Phaser.Scene.call(this, { key: 'Room'+room.id });
+      initialize: function Room (a){
+        Phaser.Scene.call(this, { key: 'Room'+room.id });
       },
       preload: function(){
         this.load.image("red_pixel", "http://localhost:3001/assets/pixel_red.png");
@@ -36,8 +37,7 @@ var Rooms = json.rooms.map(function(room){
         this.load.image('door_locked', 'http://localhost:3001/assets/door_locked.png');
         this.load.tilemapTiledJSON('EntryRoom', 'http://localhost:3001/assets/EntryRoom.json');
       },
-      create: function(){
-
+      create: function(data){
         var map = this.add.tilemap('EntryRoom');
       	var tileset_Dungeon = map.addTilesetImage('tileset_Dungeon','tileset_Dungeon');
         var gameState = {
@@ -63,18 +63,18 @@ var Rooms = json.rooms.map(function(room){
           player: {
             top: {
               x: map.widthInPixels / 2 + 10,
-              y: 32 + 32
+              y: 32 + 64
             },
             right: {
-              x: map.widthInPixels - 32,
+              x: map.widthInPixels - 64,
               y: map.heightInPixels / 2 + 16
             },
             bottom: {
               x: map.widthInPixels / 2 + 10,
-              y: map.heightInPixels - 32
+              y: map.heightInPixels - 64
             },
             left: {
-              x: 32 + 20,
+              x: 32 + 64,
               y: map.heightInPixels / 2 + 16
             },
             center: {
@@ -104,27 +104,41 @@ var Rooms = json.rooms.map(function(room){
               y: map.heightInPixels / 2
             }
           }
-
         }
-        let playerSpawn = spawnPoints.player.center;
 
-        this.add.text(playerSpawn.x - 32, playerSpawn.y - 24, 'Room'+room.id);
+        let room_label = this.add.text(10, 10, 'Room'+room.id);
+        room_label.setScrollFactor(0);
 
-        let doorSpawns = [
-          spawnPoints.door.top,
-          spawnPoints.door.left,
-          spawnPoints.door.bottom,
-          spawnPoints.door.right
-        ];
-        doorSpawns.forEach(door => {
-          this.add.sprite(door.x, door.y,'door_locked');
+        let playerSpawn = spawnPoints.player[data.spawnPosition];
+
+        var player = gameState.groups.players.get(playerSpawn.x , playerSpawn.y, gameState);
+        //make doors
+
+        function getOppositeDirection(direction){
+          switch(direction){
+            case "top": return "bottom";
+            case "left": return "right";
+            case "bottom": return "top";
+            default: return "left"
+          }
+        }
+
+        json.rooms[room.id].connections.forEach(conn => {
+          let direction = conn.split("-")[0].toLowerCase();
+          let oppositeDirection = getOppositeDirection(direction);
+          let doorSpawn = spawnPoints.door[direction];
+          let door = this.add.sprite(doorSpawn.x, doorSpawn.y,'door_locked');
+          this.physics.add.existing(door);
+          door.scaleX = 1.8;
+          door.scaleY = 1.8;
+          let nextRoomId = conn.split("-")[1];
+          this.physics.add.overlap(door, player, (a, b) => {
+            console.log()
+            this.scene.start("Room"+nextRoomId, {spawnPosition: oppositeDirection});
+          });
         });
-        //show room number
 
 
-
-        let spawn = spawnPoints.center;
-        gameState.groups.players.get(playerSpawn.x , playerSpawn.y, gameState);
 
         // gameState.groups.blocks = map.createStaticLayer('Blocks', tileset, 0,0);﻿
         // map.setCollisionBetween(41,41);
@@ -134,7 +148,7 @@ var Rooms = json.rooms.map(function(room){
         // gameState.groups.enemies.get(80,120);
         // gameState.groups.enemies.get(120,300);
         // gameState.groups.enemies.get(412,412);
-          console.log(map);
+
       },
       update: (time, delta) => {
 

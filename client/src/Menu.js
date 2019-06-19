@@ -10,7 +10,7 @@ var Menu = new Phaser.Class({
         this.add.text(10, 40, 'UP LEFT RIGHT DOWN to move');
         var playButton = this.add.text(377, 260, 'Play', { fill: '#0f0' })
         .setInteractive()
-        .on('pointerdown', () => this.scene.start('Room0'));
+        .on('pointerdown', () => this.scene.start('Room0', { spawnPosition: "center"}));
         //
         // this.input.keyboard.once('keyup_SPACE', () => {
         //
