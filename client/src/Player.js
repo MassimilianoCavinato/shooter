@@ -3,7 +3,8 @@ import Phaser from "phaser";
 var Player = new Phaser.Class({
     Extends: Phaser.GameObjects.Image,
     initialize: function Player (scene, x, y, gameState) {
-      Phaser.GameObjects.Image.call(this, scene, x, y, 'blue_pixel');
+      console.log('initialized class Player');
+      Phaser.GameObjects.Image.call(this, scene, x, y, 'body');
       this.keyboard = scene.input.keyboard.addKeys({
         'W': Phaser.Input.Keyboard.KeyCodes.W,
         'A': Phaser.Input.Keyboard.KeyCodes.A,
@@ -14,6 +15,33 @@ var Player = new Phaser.Class({
         'DOWN': Phaser.Input.Keyboard.KeyCodes.DOWN,
         'RIGHT': Phaser.Input.Keyboard.KeyCodes.RIGHT,
       });
+
+      scene.physics.add.existing(this);
+
+      this.body.width = 10;
+      this.body.height = 12;
+
+
+
+
+      let head = scene.add.image(0,0,'head');
+      // let legs = scene.add.image(34,48,'legs');
+      //
+      scene.physics.add.existing(head);
+      // scene.physics.add.existing(legs);
+      //
+      // legs.body.width = 10;
+      // legs.body.offset.x =4;
+      // head.body.width = 20;
+      // head.body.height = 20;
+      // head.body.offset.x = 4;
+      // head.body.offset.y = 2;
+      //
+      // this.add(legs);
+      this.head = this.add(head);
+      this.scaleX =0.25;
+      this.scaleY =0.25;
+      console.log(this.head);
       this.gameState = gameState;
       this.life = 100;
       this.fire_rate = 800;
@@ -26,9 +54,11 @@ var Player = new Phaser.Class({
         head: 0,
         body: 0
       };
-      scene.physics.add.existing(this);
-      this.setDisplaySize(20, 32, true);
+
+
       this.body.useDamping=true;
+
+
       this.body.bounce.x = 0.2;
       this.body.bounce.y = 0.2;
       this.body.damping = 0.9;
@@ -53,6 +83,8 @@ var Player = new Phaser.Class({
 
       }
       this.colliders = colliders;
+
+      console.log(this);
     },
 
     update: function (time, delta, state){

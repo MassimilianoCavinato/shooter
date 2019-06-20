@@ -22,7 +22,6 @@ function Game() {
     scene: Rooms
   });
 
-  console.log()
   return (
     <div
       id="shooter"

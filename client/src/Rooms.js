@@ -29,6 +29,8 @@ var Rooms = json.rooms.map(function(room){
         Phaser.Scene.call(this, { key: 'Room'+room.id });
       },
       preload: function(){
+        this.load.image("legs", "http://localhost:3001/assets/legs.png");
+        this.load.image("head", "http://localhost:3001/assets/head.png");
         this.load.image("red_pixel", "http://localhost:3001/assets/pixel_red.png");
         this.load.image("blue_pixel", "http://localhost:3001/assets/pixel_blue.png");
         this.load.image("green_pixel", "http://localhost:3001/assets/pixel_green.png");
